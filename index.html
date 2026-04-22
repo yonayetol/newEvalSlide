@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slide Deck</title>
+  <style>
+    :root {
+      --bg: #111827;
+      --panel: #1f2937;
+      --text: #f9fafb;
+      --muted: #d1d5db;
+      --accent: #0ea5e9;
+      --accent-strong: #0284c7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #1f2937, var(--bg));
+      color: var(--text);
+      display: grid;
+      grid-template-rows: 1fr auto;
+    }
+
+    .stage {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .slide-wrap {
+      width: min(96vw, 1280px);
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    #slideImage {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: rgba(17, 24, 39, 0.92);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      position: sticky;
+      bottom: 0;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #fff;
+      background: var(--accent);
+      transition: background 120ms ease;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--accent-strong);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    #counter {
+      min-width: 96px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="slide-wrap">
+      <img id="slideImage" alt="Slide" />
+    </div>
+  </main>
+
+  <nav class="controls" aria-label="Slideshow controls">
+    <button id="prevBtn" type="button">Previous</button>
+    <div id="counter" aria-live="polite"></div>
+    <button id="nextBtn" type="button">Next</button>
+  </nav>
+
+  <script>
+    const slides = [
+      "./tt.jpg",
+      "https://picture-search.skywork.ai/aippt/image/sheet/2d3933fa-568c-4c83-88d5-b32d7af9a91d.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/6227e637-0cd4-43cf-9cea-bda0f0bfdda5.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/3f57fd94-eb14-4bef-8fab-137e9fce6ba0.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/76bd63bf-60f4-4c3c-981a-cbc4a6a6b6a3.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/cec4032b-cdfb-432f-b347-4d4664c8dd87.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/af48f0af-1ae5-4181-be99-fa4c36b101c6.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/fd45f860-492a-4fdb-8470-5d3bb7ca4bf3.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/12ca7870-43da-4e6c-befa-bb25bb24472d.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/d01cee08-8dbc-482d-8cb1-eddb276cb96c.png",
+      "tt2.jpg",
+      "https://picture-search.skywork.ai/aippt/image/sheet/fc0d0086-850b-4461-aede-64f4eef709fd.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/d08907b2-8ced-48f6-9bc3-1247abda0ae3.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/96645119-e15d-45ff-ae3a-19f2f02135fb.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/eceb172b-8711-45c3-990a-f180dabfd7b3.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/183a6112-ddaa-421b-961c-d28662473e30.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/2f8a6328-9c97-4d89-bf5b-2d3837dd930f.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/e0ed6b1d-c5f2-411b-bbb1-dd4ab4271869.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/c08e97a9-54e8-44d4-995f-bd0a13f1d0f9.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/fc14fe05-3d97-4d9f-8d9c-691113680048.png",
+      "https://picture-search.skywork.ai/aippt/image/sheet/3d54313b-189e-4b49-a7e4-5c65d4baf6f0.png",
+      "./tt3.jpg",
+      "./tt5.jpg",
+      "./tt6.jpg",
+      "https://github.com/yonayetol/evaluationSlide/blob/main/ordered_images/page_25_thank_you.png?raw=true"
+    ];
+
+    const img = document.getElementById("slideImage");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const counter = document.getElementById("counter");
+
+    let index = 0;
+
+    function render() {
+      img.src = slides[index];
+      img.alt = `Slide ${index + 1}`;
+      counter.textContent = `${index + 1} / ${slides.length}`;
+      prevBtn.disabled = index === 0;
+      nextBtn.disabled = index === slides.length - 1;
+    }
+
+    prevBtn.addEventListener("click", () => {
+      if (index > 0) {
+        index -= 1;
+        render();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (index < slides.length - 1) {
+        index += 1;
+        render();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
+        nextBtn.click();
+      }
+      if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        prevBtn.click();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
